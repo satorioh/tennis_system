@@ -1,0 +1,13 @@
+path: ./tennis
+train: train/images
+val: valid/images
+
+nc: 1
+names: ['tennis ball']
+
+roboflow:
+  workspace: odlearn
+  project: yolov5_tennis
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/odlearn/yolov5_tennis/dataset/2
