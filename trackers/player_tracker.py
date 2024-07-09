@@ -1,4 +1,6 @@
 import pickle
+from os import path
+
 import cv2
 
 from ultralytics import YOLO
@@ -8,14 +10,16 @@ class PlayerTracker:
     def __init__(self, model_path):
         self.model = YOLO(model_path)
 
-    def detect_frames(self, frames, read_from_stub=False, stub_path=None):
+    def detect_frames(self, frames, stub_path=None):
         player_detections = []
 
-        if read_from_stub and stub_path is not None:
+        if stub_path and path.exists(stub_path):
+            print("Reading from stub")
             with open(stub_path, 'rb') as f:
                 player_detections = pickle.load(f)
             return player_detections
 
+        print("Detecting players...")
         for frame in frames:
             player_dict = self.detect_frame(frame)
             player_detections.append(player_dict)
@@ -36,6 +40,7 @@ class PlayerTracker:
         return player_dict
 
     def draw_bboxes(self, video_frames, player_detections):
+        print("Drawing player bounding boxes...")
         output_video_frames = []
         for frame, player_dict in zip(video_frames, player_detections):
             for track_id, bbox in player_dict.items():
