@@ -2,11 +2,48 @@ import pickle
 import cv2
 from os import path
 from ultralytics import YOLO
+from utils import measure_distance, get_center_of_bbox
 
 
 class PlayerTracker:
     def __init__(self, model_path):
         self.model = YOLO(model_path)
+
+    def choose_and_filter_players(self, court_keypoints, player_detections):
+        """
+
+        :param court_keypoints: [x1, y1, x2, y2, ...]
+        :param player_detections: [{ track_id_1: [x1, y1, x2, y2], track_id_2: [x1, y1, x2, y2] }]
+        :return:
+        """
+        print("Choosing and filtering players...")
+        player_dict_from_first_frame = player_detections[0]
+        choose_player_ids = self.get_choose_player_ids(court_keypoints, player_dict_from_first_frame)
+
+        filtered_player_detections = []
+        for player_dict in player_detections:
+            filtered_player_dict = {track_id: bbox for track_id, bbox in player_dict.items() if
+                                    track_id in choose_player_ids}
+            filtered_player_detections.append(filtered_player_dict)
+        return filtered_player_detections
+
+    def get_choose_player_ids(self, court_keypoints, player_dict_from_first_frame):
+        print("get choose player ids...")
+        distances = []
+        for track_id, bbox in player_dict_from_first_frame.items():
+            player_center = get_center_of_bbox(bbox)
+
+            min_distance = float('inf')
+            court_keypoints_len = len(court_keypoints)
+            for i in range(0, court_keypoints_len, 2):
+                court_keypoint = (court_keypoints[i], court_keypoints[i + 1])
+                distance = measure_distance(player_center, court_keypoint)
+                if distance < min_distance:
+                    min_distance = distance
+            distances.append((track_id, min_distance))
+        # sort the distances in ascending order
+        distances.sort(key=lambda x: x[1])
+        return [i[0] for i in distances[:2]]
 
     def detect_frames(self, frames, stub_path=None):
         player_detections = []

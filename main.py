@@ -4,6 +4,7 @@ from utils import save_video, read_video
 from trackers import PlayerTracker, BallTracker
 from court_detector import CourtKeyPointsDetector
 
+need_output = True
 input_video_path = "./assert/input_video.mp4"
 output_video_path = "./output/output_video.mp4"
 
@@ -39,6 +40,9 @@ def main():
     # Detect Court Key Points
     court_keypoints = court_keypoints_detector.predict(video_frames[0])
 
+    # Choose and Filter Player detections
+    player_detections = player_tracker.choose_and_filter_players(court_keypoints, player_detections)
+
     # ----------------------Drawing----------------------#
     # Draw Bounding Boxes
     output_video_frames = player_tracker.draw_bboxes(video_frames, player_detections)
@@ -51,7 +55,8 @@ def main():
     draw_frame_number(output_video_frames)
 
     # ----------------------Save Video----------------------#
-    save_video(output_video_frames, output_video_path)
+    if need_output:
+        save_video(output_video_frames, output_video_path)
 
 
 if __name__ == '__main__':
