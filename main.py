@@ -1,3 +1,5 @@
+import cv2
+
 from utils import save_video, read_video
 from trackers import PlayerTracker, BallTracker
 from court_detector import CourtKeyPointsDetector
@@ -13,6 +15,11 @@ keypoints_model_path = "./model/keypoints_model.pth"
 # Stub Paths
 player_stub_path = "./tracker_stubs/player_detections.pkl"
 ball_stub_path = "./tracker_stubs/ball_detections.pkl"
+
+
+def draw_frame_number(video_frames):
+    for i, frame in enumerate(video_frames):
+        cv2.putText(frame, f"Frame: {i}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 
 def main():
@@ -40,7 +47,10 @@ def main():
     # Draw Court Key Points
     output_video_frames = court_keypoints_detector.draw_keypoints_on_video_frames(output_video_frames, court_keypoints)
 
-    # Save video
+    # Draw Frame Number
+    draw_frame_number(output_video_frames)
+
+    # ----------------------Save Video----------------------#
     save_video(output_video_frames, output_video_path)
 
 
