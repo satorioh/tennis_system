@@ -1,5 +1,6 @@
 import pickle
 import cv2
+import pandas as pd
 from os import path
 from ultralytics import YOLO
 
@@ -37,6 +38,21 @@ class BallTracker:
             result = box.xyxy.tolist()[0]
             ball_dict[1] = result
         return ball_dict
+
+    def interpolate_ball_positions(self, ball_positions):
+        """
+        :param ball_positions: [{}, {1: [895.4949340820312, 613.216064453125, 909.893798828125, 637.4019165039062]}, {}...]
+        :return:
+        """
+        ball_positions = [position.get(1, []) for position in ball_positions]
+        # convert the list into pandas dataframe
+        df_ball_positions = pd.DataFrame(ball_positions, columns=['x1', 'y1', 'x2', 'y2'])
+        # interpolate the missing values
+        df_ball_positions = df_ball_positions.interpolate()
+        df_ball_positions = df_ball_positions.bfill()  # fill the first missing value
+        ball_positions = [{1: result} for result in df_ball_positions.to_numpy().tolist()]
+
+        return ball_positions
 
     def draw_bboxes(self, video_frames, ball_detections):
         print("Drawing ball bounding boxes...")

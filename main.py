@@ -26,6 +26,9 @@ def main():
     player_detections = player_tracker.detect_frames(video_frames, stub_path=player_stub_path)
     ball_detections = ball_tracker.detect_frames(video_frames, stub_path=ball_stub_path)
 
+    # Interpolate Ball Positions
+    ball_detections = ball_tracker.interpolate_ball_positions(ball_detections)
+
     # Detect Court Key Points
     court_keypoints = court_keypoints_detector.predict(video_frames[0])
 
