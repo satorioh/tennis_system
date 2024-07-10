@@ -3,6 +3,7 @@ import cv2
 from utils import save_video, read_video
 from trackers import PlayerTracker, BallTracker
 from court_detector import CourtKeyPointsDetector
+from mini_court import MiniCourt
 
 need_output = True
 input_video_path = "./assert/input_video.mp4"
@@ -28,6 +29,7 @@ def main():
     player_tracker = PlayerTracker(model_path=player_detect_model_path)
     ball_tracker = BallTracker(model_path=ball_detect_model_path)
     court_keypoints_detector = CourtKeyPointsDetector(keypoints_model_path)
+    mini_court = MiniCourt(video_frames[0])
 
     # ----------------------Detection----------------------#
     # Detect Players and Ball
@@ -53,6 +55,9 @@ def main():
 
     # Draw Frame Number
     draw_frame_number(output_video_frames)
+
+    # Draw Mini Court
+    output_video_frames = mini_court.draw_mini_court(output_video_frames)
 
     # ----------------------Save Video----------------------#
     if need_output:
