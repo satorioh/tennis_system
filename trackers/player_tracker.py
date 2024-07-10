@@ -1,8 +1,6 @@
 import pickle
-from os import path
-
 import cv2
-
+from os import path
 from ultralytics import YOLO
 
 
@@ -14,7 +12,7 @@ class PlayerTracker:
         player_detections = []
 
         if stub_path and path.exists(stub_path):
-            print("Reading from stub")
+            print("Reading player detections from stub")
             with open(stub_path, 'rb') as f:
                 player_detections = pickle.load(f)
             return player_detections
