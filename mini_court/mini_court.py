@@ -24,6 +24,15 @@ class MiniCourt():
                                                 self.court_drawing_width
                                                 )
 
+    def get_start_point_of_mini_court(self):
+        return self.court_start_x, self.court_start_y
+
+    def get_width_of_mini_court(self):
+        return self.court_drawing_width
+
+    def get_court_drawing_keypoints(self):
+        return self.drawing_key_points
+
     def set_canvas_background_box_position(self, frame):
         frame = frame.copy()
         self.end_x = frame.shape[1] - self.buffer
