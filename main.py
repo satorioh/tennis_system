@@ -4,6 +4,7 @@ from utils import save_video, read_video
 from trackers import PlayerTracker, BallTracker
 from court_detector import CourtKeyPointsDetector
 from mini_court import MiniCourt
+from player_stats import set_stats, draw_stats
 
 need_output = True
 input_video_path = "./assert/input_video.mp4"
@@ -46,11 +47,13 @@ def main():
     player_detections = player_tracker.choose_and_filter_players(court_keypoints, player_detections)
 
     # Get Ball Hit Frames
-    ball_hit_frames = ball_tracker.get_ball_hit_frames(ball_detections)
+    ball_shot_frames = ball_tracker.get_ball_hit_frames(ball_detections)
 
     # Convert bboxes to mini court positions
     player_mini_court_detections, ball_mini_court_detections = mini_court.convert_bboxes_to_mini_court_coordinates(
         player_detections, ball_detections, court_keypoints)
+
+    stats_data_df = set_stats(player_mini_court_detections, ball_mini_court_detections, ball_shot_frames, mini_court)
 
     # ----------------------Drawing----------------------#
     # Draw Bounding Boxes
@@ -71,6 +74,7 @@ def main():
     output_video_frames = mini_court.draw_position_on_mini_court(output_video_frames, ball_mini_court_detections,
                                                                  color=(0, 255, 255))
 
+    output_video_frames = draw_stats(output_video_frames, stats_data_df)
     # ----------------------Save Video----------------------#
     if need_output:
         save_video(output_video_frames, output_video_path)

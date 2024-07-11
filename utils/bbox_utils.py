@@ -30,3 +30,7 @@ def get_closest_keypoint_index(point, keypoints, ref_keypoints):
             key_point_index = keypoint_i
 
     return key_point_index
+
+
+def get_closest_player_by_point(player_bbox, target_point):
+    return min(player_bbox.keys(), key=lambda player_id: measure_distance(player_bbox[player_id], target_point))
