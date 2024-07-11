@@ -5,7 +5,7 @@ from trackers import PlayerTracker, BallTracker
 from court_detector import CourtKeyPointsDetector
 from mini_court import MiniCourt
 
-need_output = True
+need_output = False
 input_video_path = "./assert/input_video.mp4"
 output_video_path = "./output/output_video.mp4"
 
@@ -44,6 +44,9 @@ def main():
 
     # Choose and Filter Player detections
     player_detections = player_tracker.choose_and_filter_players(court_keypoints, player_detections)
+
+    # Get Ball Hit Frames
+    ball_hit_frames = ball_tracker.get_ball_hit_frames(ball_detections)
 
     # ----------------------Drawing----------------------#
     # Draw Bounding Boxes
