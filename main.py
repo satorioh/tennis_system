@@ -1,3 +1,5 @@
+import time
+
 import cv2
 
 from utils import save_video, read_video
@@ -6,7 +8,7 @@ from court_detector import CourtKeyPointsDetector
 from mini_court import MiniCourt
 from player_stats import set_stats, draw_stats
 
-need_output = True
+need_output = False
 input_video_path = "./assert/input_video.mp4"
 output_video_path = "./output/output_video.mp4"
 
@@ -26,6 +28,7 @@ def draw_frame_number(video_frames):
 
 
 def main():
+    start_time = time.time()
     video_frames = read_video(input_video_path)
     player_tracker = PlayerTracker(model_path=player_detect_model_path)
     ball_tracker = BallTracker(model_path=ball_detect_model_path)
@@ -75,6 +78,8 @@ def main():
                                                                  color=(0, 255, 255))
 
     output_video_frames = draw_stats(output_video_frames, stats_data_df)
+    end_time = time.time()
+    print(f"Time: {end_time - start_time}")
     # ----------------------Save Video----------------------#
     if need_output:
         save_video(output_video_frames, output_video_path)
